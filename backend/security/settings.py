@@ -84,6 +84,27 @@ def revoke_token(token: str):
     TOKEN_BLACKLIST.add(token)
 
 
+def admin_required(payload: dict = Depends(verify_token)) -> dict:
+    if payload.get("role") != "Admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+    return payload
+
+
+def manager_required(payload: dict = Depends(verify_token)) -> dict:
+    if payload.get("role") != "Manager":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+    return payload
+
+
+def user_required(payload: dict = Depends(verify_token)) -> dict:
+    if payload.get("role") != "User":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+    return payload
+
+
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 

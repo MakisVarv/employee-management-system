@@ -2,18 +2,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from models.user import User
-from security.settings import create_access_token, create_refresh_token, get_current_user, validate_password, verify_password
+from security.settings import admin_required, create_access_token, create_refresh_token, manager_required, user_required, validate_password, verify_password
 from schemas.user_schema import UserCreate, UserLogin
 from database.connection import get_db
 from sqlalchemy.orm import Session
 from repositories.user_crud import create_user, get_user_by_username
 
 user_router = APIRouter()
-
-
-@user_router.get("/me")
-def me(current_user: dict = Depends(get_current_user)):
-    return current_user
 
 
 @user_router.post('/register')
@@ -47,3 +42,33 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
         "refresh_token": refresh_token,
         "token_type": "bearer"
     }
+
+
+@user_router.get("/user-dash")
+async def get_User(payload: dict = Depends(user_required)):
+    try:
+        return {"sub": payload.get("sub")}
+    except HTTPException as ex:
+        raise ex
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@user_router.get("/manager-dash")
+async def get_Manager(payload: dict = Depends(manager_required)):
+    try:
+        return {"sub": payload.get("sub")}
+    except HTTPException as ex:
+        raise ex
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@user_router.get("/admin-dash")
+async def get_Admin(payload: dict = Depends(admin_required)):
+    try:
+        return {"sub": payload.get("sub")}
+    except HTTPException as ex:
+        raise ex
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
