@@ -3,10 +3,9 @@ from models.user import Role
 
 
 class UserCreate(BaseModel):
-    id: int
     username: str
     password: str
-    role: str
+    role: Role = Role.USER
 
 
 class UserLogin(BaseModel):
