@@ -1,5 +1,5 @@
-
 from pydantic import BaseModel
+from models.user import Role
 
 
 class UserCreate(BaseModel):
@@ -17,3 +17,7 @@ class UserLogin(BaseModel):
 class Token(BaseModel):
     accessToken: str
     tokenType: str
+
+
+class UserRoleUpdate(BaseModel):
+    role: Role

@@ -32,7 +32,8 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         return verify_token(token, expected_type="access")
     except Exception:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Invalid or expired token")
 
 
 def create_access_token(data: dict) -> str:

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from repositories.employee_crud import create_employee, delete_employee, get_employees
 from models.employee import Employee
@@ -30,7 +30,8 @@ def get_employee(emp_id: int, db: Session = Depends(get_db)):
     print(emp.__dict__)
 
     if not emp:
-        raise HTTPException(status_code=404, detail="Employee not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Employee not found")
 
     return emp
 
@@ -40,7 +41,8 @@ def update_employee(emp_id: int, emp: EmployeeCreate, db: Session = Depends(get_
     db_emp = db.query(Employee).filter(Employee.id == emp_id).first()
 
     if not db_emp:
-        raise HTTPException(status_code=404, detail="Employee not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Employee not found")
 
     for key, value in emp.dict().items():
         setattr(db_emp, key, value)
