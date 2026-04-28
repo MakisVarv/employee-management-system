@@ -1,46 +1,39 @@
-body {
-  font-family: Arial;
-  background: #f4f6f8;
-}
 
-.container {
-  width: 800px;
-  margin: auto;
+.App {
   text-align: center;
 }
 
-.form {
-  display: grid;
-  gap: 10px;
-  margin-bottom: 20px;
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
 }
 
-input, select {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
 }
 
-button {
-  padding: 10px;
-  border: none;
-  background: #007bff;
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
   color: white;
-  border-radius: 6px;
-  cursor: pointer;
 }
 
-button:hover {
-  background: #0056b3;
+.App-link {
+  color: #61dafb;
 }
 
-.card {
-  background: white;
-  padding: 15px;
-  margin: 10px;
-  border-radius: 8px;
-}
-
-.buttons button {
-  margin: 5px;
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
