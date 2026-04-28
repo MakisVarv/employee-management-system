@@ -9,10 +9,11 @@ export const AuthProvider = ({ children }) => {
   const login = async (data) => {
     const res = await API.post('/login', data);
 
+    console.log(res.data);
     localStorage.setItem('access_token', res.data.access_token);
     localStorage.setItem('refresh_token', res.data.refresh_token);
 
-    setUser({ username: data.username });
+    setUser({ username: data.username, role: res.data.role });
   };
 
   const register = async (data) => {
@@ -23,6 +24,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.clear();
     setUser(null);
   };
+
+  console.log(user);
 
   return (
     <AuthContext.Provider value={{ login, register, logout, user }}>

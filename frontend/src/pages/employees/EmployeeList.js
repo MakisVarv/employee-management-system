@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import API from '../../services/api';
 import EmployeeModal from './EmployeeModal';
+import { AuthContext } from '../../context/AuthContext';
 
 export default function EmployeeList() {
   const [employees, setEmployees] = useState([]);
   const [selected, setSelected] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const fetchEmployees = async () => {
     const res = await API.get('/employees');
@@ -59,12 +61,15 @@ export default function EmployeeList() {
                     Edit
                   </button>
 
-                  <button
-                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-                    onClick={() => handleDelete(emp.id)}
-                  >
-                    Delete
-                  </button>
+                  {user?.role === 'Manager' ||
+                  user?.role === 'Admin' ? (
+                    <button
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                      onClick={() => handleDelete(emp.id)}
+                    >
+                      Delete
+                    </button>
+                  ) : null}
                 </td>
               </tr>
             ))}
