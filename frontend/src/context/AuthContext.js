@@ -1,3 +1,4 @@
+import { jwtDecode } from 'jwt-decode';
 import { createContext, useState } from 'react';
 import API from '../services/api';
 
@@ -12,8 +13,12 @@ export const AuthProvider = ({ children }) => {
     console.log(res.data);
     localStorage.setItem('access_token', res.data.access_token);
     localStorage.setItem('refresh_token', res.data.refresh_token);
+    const decoded = jwtDecode(res.data.access_token);
 
-    setUser({ username: data.username, role: res.data.role });
+    setUser({
+      username: decoded.sub,
+      role: decoded.role,
+    });
   };
 
   const register = async (data) => {
