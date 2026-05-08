@@ -1,23 +1,41 @@
+import { AuthProvider } from './context/AuthContext';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
-import Dashboard from './pages/dashboard/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
-import { AuthProvider } from './context/AuthContext';
+import Layout from './components/Layout';
+import DashboardPage from './pages/dashboard/DashboardPage';
+import EmployeePage from './pages/employees/EmployeePage';
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* PUBLIC */}
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
+          {/* PROTECTED */}
           <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <Layout>
+                  <DashboardPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/employees"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <EmployeePage />
+                </Layout>
               </ProtectedRoute>
             }
           />
