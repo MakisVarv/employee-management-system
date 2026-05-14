@@ -5,7 +5,18 @@ import API from '../services/api';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const token = localStorage.getItem('access_token');
+
+    if (!token) return null;
+
+    const decoded = jwtDecode(token);
+
+    return {
+      username: decoded.sub,
+      role: decoded.role,
+    };
+  });
 
   const login = async (data) => {
     const res = await API.post('/login', data);

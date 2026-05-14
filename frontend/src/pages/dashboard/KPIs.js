@@ -33,8 +33,8 @@ export default function KPIs({ employees }) {
     {
       title: 'Part Time',
       value: parttime,
-      color: 'bg-green-500',
-      icon: '💼',
+      color: 'bg-yellow-500',
+      icon: '🕒',
     },
     {
       title: 'Managers',

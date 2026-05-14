@@ -16,4 +16,3 @@ frontend/.env
 frontend/build/
 frontend/dist/
 frontend/src/pages/dashboard/Dashboard.js
-frontend/src/pages/employees/EmployeeList.js
