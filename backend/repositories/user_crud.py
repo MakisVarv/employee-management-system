@@ -5,13 +5,17 @@ from security.settings import hash_password
 
 
 def create_user(db: Session, user: UserCreate):
-    db_user = User(username=user.username,
-                   password=hash_password(user.password),
-                   role=user.role)
+    db_user = User(
+        username=user.username, password=hash_password(user.password), role=user.role
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def get_users(db: Session):
+    return db.query(User).all()
 
 
 def get_user_by_username(db: Session, username: str):
@@ -25,4 +29,15 @@ def update_role_name(db: Session, user_id, role_update: UserRoleUpdate):
     user.role = role_update.role
     db.commit()
     db.refresh(user)
+    return user
+
+
+def delete_user(db: Session, user_id: int):
+    user = db.query(User).filter(User.id == user_id).first()
+
+    if not user:
+        return None
+
+    db.delete(user)
+    db.commit()
     return user

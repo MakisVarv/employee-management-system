@@ -8,6 +8,12 @@ class UserCreate(BaseModel):
     role: Role = Role.USER
 
 
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    role: Role
+
+
 class UserLogin(BaseModel):
     username: str
     password: str

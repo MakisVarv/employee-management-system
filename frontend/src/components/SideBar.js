@@ -1,7 +1,10 @@
+import { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 export default function Sidebar() {
   const location = useLocation();
+  const { user } = useContext(AuthContext);
 
   const linkClass = (path) =>
     `flex items-center gap-2 p-3 rounded w-full ${
@@ -11,7 +14,7 @@ export default function Sidebar() {
   return (
     <div className="w-64 bg-gray-900 text-white flex flex-col">
       <h2 className="text-xl p-4 border-b border-gray-700">
-        Admin Panel
+        {user ? `${user.role} Panel` : 'Panel'}
       </h2>
 
       <nav className="flex flex-col p-4 space-y-2">
@@ -23,9 +26,11 @@ export default function Sidebar() {
           👥 Employees
         </Link>
 
-        <Link to="/users" className={linkClass('/users')}>
-          👤 Users
-        </Link>
+        {(user?.role === 'Manager' || user?.role === 'Admin') && (
+          <Link to="/users" className={linkClass('/users')}>
+            👤 Users
+          </Link>
+        )}
       </nav>
     </div>
   );

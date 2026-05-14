@@ -5,15 +5,22 @@ from security.settings import (
     admin_required,
     create_access_token,
     create_refresh_token,
+    manager_or_admin_required,
     manager_required,
     user_required,
     validate_password,
     verify_password,
 )
-from schemas.user_schema import UserCreate, UserLogin, UserRoleUpdate
+from schemas.user_schema import UserCreate, UserLogin, UserResponse, UserRoleUpdate
 from database.connection import get_db
 from sqlalchemy.orm import Session
-from repositories.user_crud import create_user, get_user_by_username, update_role_name
+from repositories.user_crud import (
+    create_user,
+    delete_user,
+    get_user_by_username,
+    get_users,
+    update_role_name,
+)
 
 user_router = APIRouter()
 
@@ -53,6 +60,14 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
         "access_token": access_token,
         "refresh_token": refresh_token,
     }
+
+
+@user_router.get("/users")
+def get_all_users(
+    db: Session = Depends(get_db),
+    current_user=Depends(manager_or_admin_required),
+):
+    return get_users(db)
 
 
 @user_router.get("/user-dash")
@@ -110,3 +125,20 @@ async def set_UserRole(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
+
+
+@user_router.delete("/users/{user_id}")
+def delete_existing_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(admin_required),
+):
+    user = delete_user(db, user_id)
+
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    return {"message": "User deleted successfully"}

@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import EmployeePage from './pages/employees/EmployeePage';
+import UserPage from './pages/users/UserPage';
 
 export default function App() {
   return (
@@ -35,6 +36,16 @@ export default function App() {
               <ProtectedRoute>
                 <Layout>
                   <EmployeePage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <UserPage />
                 </Layout>
               </ProtectedRoute>
             }
