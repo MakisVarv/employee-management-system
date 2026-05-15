@@ -18,6 +18,9 @@ export default function Sidebar() {
       </h2>
 
       <nav className="flex flex-col p-4 space-y-2">
+        <Link to="/profile" className={linkClass('/profile')}>
+          👤 Profile
+        </Link>
         <Link to="/dashboard" className={linkClass('/dashboard')}>
           📊 Dashboard
         </Link>

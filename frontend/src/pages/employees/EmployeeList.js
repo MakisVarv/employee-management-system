@@ -3,7 +3,11 @@ import API from '../../services/api';
 import EmployeeModal from './EmployeeModal';
 import { AuthContext } from '../../context/AuthContext';
 
-export default function EmployeeList({ employees, setEmployees }) {
+export default function EmployeeList({
+  employees = [],
+  setEmployees,
+  refresh,
+}) {
   const [selected, setSelected] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const { user } = useContext(AuthContext);
@@ -76,6 +80,7 @@ export default function EmployeeList({ employees, setEmployees }) {
             setShowModal(false);
             setSelected(null);
           }}
+          refresh={refresh}
         />
       )}
     </div>

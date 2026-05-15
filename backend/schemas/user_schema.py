@@ -26,3 +26,7 @@ class Token(BaseModel):
 
 class UserRoleUpdate(BaseModel):
     role: Role
+
+
+class UserUpdate(BaseModel):
+    username: str

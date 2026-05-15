@@ -34,10 +34,10 @@ export default function EmployeeModal({
     };
 
     if (employee) {
-      await API.delete(`/employees/${employee.id}`);
+      await API.put(`/employees/${employee.id}`, payload);
+    } else {
+      await API.post('/employees', payload);
     }
-
-    await API.post('/employees', payload);
 
     refresh();
     onClose();
@@ -68,9 +68,9 @@ export default function EmployeeModal({
           onChange={(e) => setForm({ ...form, type: e.target.value })}
         >
           <option value="">Select Type</option>
-          <option value="Manager">Manager</option>
-          <option value="Worker">Worker</option>
-          <option value="Employee">Employee</option>
+          <option value="fulltime">Full Time</option>
+          <option value="parttime">Part Time</option>
+          <option value="manager">Manager</option>
         </select>
 
         {/* SALARY */}
@@ -138,7 +138,10 @@ export default function EmployeeModal({
 
         {/* BUTTONS */}
         <div className="flex justify-between pt-2">
-          <button className="bg-blue-500 text-white px-4 py-2 rounded">
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
             Save
           </button>
 

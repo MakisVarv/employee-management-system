@@ -7,12 +7,15 @@ export default function EmployeePage() {
   const [search, setSearch] = useState('');
   const [type, setType] = useState('');
 
-  useEffect(() => {
+  const fetchEmployees = () => {
     axios
       .get('http://127.0.0.1:8001/employees')
       .then((res) => setEmployees(res.data));
-  }, []);
+  };
 
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
   const filtered = employees.filter((e) => {
     const name = e.name ? e.name.toLowerCase() : '';
     return (
@@ -46,6 +49,7 @@ export default function EmployeePage() {
       <EmployeeList
         employees={filtered}
         setEmployees={setEmployees}
+        refresh={fetchEmployees}
       />
     </>
   );

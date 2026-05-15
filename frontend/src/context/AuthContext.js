@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
     const decoded = jwtDecode(token);
 
     return {
+      id: decoded.id,
       username: decoded.sub,
       role: decoded.role,
     };
@@ -27,6 +28,7 @@ export const AuthProvider = ({ children }) => {
     const decoded = jwtDecode(res.data.access_token);
 
     setUser({
+      id: decoded.id,
       username: decoded.sub,
       role: decoded.role,
     });

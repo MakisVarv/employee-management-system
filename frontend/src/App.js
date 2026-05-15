@@ -8,6 +8,7 @@ import Layout from './components/Layout';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import EmployeePage from './pages/employees/EmployeePage';
 import UserPage from './pages/users/UserPage';
+import ProfilePage from './pages/profile/profile';
 
 export default function App() {
   return (
@@ -46,6 +47,16 @@ export default function App() {
               <ProtectedRoute>
                 <Layout>
                   <UserPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <ProfilePage />
                 </Layout>
               </ProtectedRoute>
             }
