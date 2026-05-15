@@ -17,7 +17,7 @@ It was built as a practical project to strengthen modern full-stack development 
 ### Backend
 - Python
 - FastAPI
-- SQLAlchemy
+- SQLAlchemy + MySQL
 - JWT authentication
 - Role-based authorization
 
