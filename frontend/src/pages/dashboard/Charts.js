@@ -14,15 +14,18 @@ export default function Charts({ employees }) {
   const data = [
     {
       name: 'Full Time',
-      value: employees.filter((e) => e.type === 'fulltime').length,
+      value: employees.data.filter((e) => e.type === 'fulltime')
+        .length,
     },
     {
       name: 'Part Time',
-      value: employees.filter((e) => e.type === 'parttime').length,
+      value: employees.data.filter((e) => e.type === 'parttime')
+        .length,
     },
     {
       name: 'Managers',
-      value: employees.filter((e) => e.type === 'manager').length,
+      value: employees.data.filter((e) => e.type === 'manager')
+        .length,
     },
   ];
 

@@ -9,6 +9,8 @@ import DashboardPage from './pages/dashboard/DashboardPage';
 import EmployeePage from './pages/employees/EmployeePage';
 import UserPage from './pages/users/UserPage';
 import ProfilePage from './pages/profile/profile';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function App() {
   return (
@@ -62,6 +64,7 @@ export default function App() {
             }
           />
         </Routes>
+        <ToastContainer position="top-right" autoClose={3000} />
       </BrowserRouter>
     </AuthProvider>
   );

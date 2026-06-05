@@ -14,7 +14,6 @@ function EmployeeForm({ editId }) {
     bonus: 0,
     team_size: 0,
   });
-
   const navigate = useNavigate();
 
   // 📥 LOAD employee αν είναι edit
@@ -27,14 +26,13 @@ function EmployeeForm({ editId }) {
   }, [editId]);
 
   const handleChange = (e) => {
-    const value =
-      e.target.type === 'number'
-        ? Number(e.target.value)
-        : e.target.value;
+    let { name, value, type } = e.target;
+    value =
+      type === 'number' ? Number(value) : value;
 
     setForm({
       ...form,
-      [e.target.name]: value,
+      [name]: value,
     });
   };
 

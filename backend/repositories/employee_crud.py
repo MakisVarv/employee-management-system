@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from models.employee import Employee
+from sqlalchemy import asc, desc
 
 
 def create_employee(db: Session, emp):
@@ -10,8 +11,25 @@ def create_employee(db: Session, emp):
     return db_emp
 
 
-def get_employees(db: Session):
-    return db.query(Employee).all()
+def get_employees(db, skip, limit, search, type, sort_by, order):
+    query = db.query(Employee)
+    if search:
+        query = query.filter(Employee.name.ilike(f"%{search}%"))
+    if type:
+        query = query.filter(Employee.type == type)
+    column = getattr(Employee, sort_by, Employee.id)
+
+    if order == "desc":
+        query = query.order_by(desc(column))
+    else:
+        query = query.order_by(asc(column))
+        total = query.count()
+        data = query.offset(skip).limit(limit).all()
+
+    return {
+        "data": data,
+        "total": total,
+    }
 
 
 def delete_employee(db: Session, emp_id: int):

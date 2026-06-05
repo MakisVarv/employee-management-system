@@ -16,6 +16,13 @@ export default function Register() {
     await register(form);
     navigate('/');
   };
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setForm((currentForm) => ({
+      ...currentForm,
+      [name]: value,
+    }));
+  }
 
   return (
     <div className="h-screen flex items-center justify-center bg-gray-100">
@@ -28,18 +35,16 @@ export default function Register() {
         <input
           className="w-full mb-2 p-2 border"
           placeholder="Username"
-          onChange={(e) =>
-            setForm({ ...form, username: e.target.value })
-          }
+          name="username"
+          onChange={handleChange}
         />
 
         <input
           type="password"
           className="w-full mb-4 p-2 border"
           placeholder="Password"
-          onChange={(e) =>
-            setForm({ ...form, password: e.target.value })
-          }
+          name="password"
+          onChange={handleChange}
         />
 
         <button className="w-full bg-green-500 text-white p-2">

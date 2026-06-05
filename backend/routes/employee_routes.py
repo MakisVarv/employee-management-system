@@ -4,6 +4,7 @@ from repositories.employee_crud import create_employee, delete_employee, get_emp
 from models.employee import Employee
 from schemas.employee_schema import EmployeeCreate, EmployeeResponse
 from database.connection import get_db
+from sqlalchemy import asc, desc
 
 employee_router = APIRouter(prefix="/employees")
 
@@ -14,8 +15,24 @@ def create(emp: EmployeeCreate, db: Session = Depends(get_db)):
 
 
 @employee_router.get("/")
-def read(db: Session = Depends(get_db)):
-    return get_employees(db)
+def read(
+    skip: int = 0,
+    limit: int = 10,
+    search: str = "",
+    type: str = "",
+    sort_by: str = "id",
+    order: str = "asc",
+    db: Session = Depends(get_db),
+):
+    return get_employees(
+        db,
+        skip=skip,
+        limit=limit,
+        search=search,
+        type=type,
+        sort_by=sort_by,
+        order=order,
+    )
 
 
 @employee_router.delete("/{emp_id}")

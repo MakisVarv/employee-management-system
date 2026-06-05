@@ -1,20 +1,19 @@
 export default function KPIs({ employees }) {
-  const total = employees.length;
+  const data = employees?.data || []; // 🔥 SAFE
 
-  const fulltime = employees.filter(
-    (e) => e.type === 'fulltime',
-  ).length;
-  const parttime = employees.filter(
-    (e) => e.type === 'parttime',
-  ).length;
-  const managers = employees.filter(
-    (e) => e.type === 'manager',
-  ).length;
+  const total = data.length;
 
-  const totalSalary = employees.reduce(
+  const fulltime = data.filter((e) => e.type === 'fulltime').length;
+
+  const parttime = data.filter((e) => e.type === 'parttime').length;
+
+  const managers = data.filter((e) => e.type === 'manager').length;
+
+  const totalSalary = data.reduce(
     (sum, e) => sum + (e.salary || 0),
     0,
   );
+
   const avgSalary = total ? Math.round(totalSalary / total) : 0;
 
   const cards = [

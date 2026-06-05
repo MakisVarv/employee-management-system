@@ -1,158 +1,67 @@
 import { useState, useEffect } from 'react';
-import API from '../../services/api';
+import { useDispatch } from 'react-redux';
+import {
+  addEmployee,
+  updateEmployee,
+} from '../../store/employeesSlice';
+import { toast } from 'react-toastify';
 
-export default function EmployeeModal({
-  employee,
-  onClose,
-  refresh,
-}) {
+export default function EmployeeModal({ employee, onClose }) {
+  const dispatch = useDispatch();
+
   const [form, setForm] = useState({
     name: '',
     type: '',
-    salary: '',
-    hourly_rate: '',
-    hours: '',
-    bonus: '',
-    team_size: '',
+    salary: 0,
+    hourly_rate: 0,
+    hours: 0,
+    bonus: 0,
+    team_size: 0,
   });
 
   useEffect(() => {
     if (employee) setForm(employee);
   }, [employee]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    const payload = {
-      name: form.name,
-      type: form.type,
-      salary: Number(form.salary) || 0,
-      hourly_rate: Number(form.hourly_rate) || 0,
-      hours: Number(form.hours) || 0,
-      bonus: Number(form.bonus) || 0,
-      team_size: Number(form.team_size) || 0,
-    };
-
     if (employee) {
-      await API.put(`/employees/${employee.id}`, payload);
+      dispatch(updateEmployee({ id: employee.id, data: form }));
+      toast.success('Employee updated');
     } else {
-      await API.post('/employees', payload);
+      dispatch(addEmployee(form));
+      toast.success('Employee added');
     }
 
-    refresh();
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-40">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded shadow w-96 space-y-3"
+        className="bg-white p-6 rounded space-y-3"
       >
-        <h2 className="text-xl font-bold">
-          {employee ? 'Edit' : 'Add'} Employee
-        </h2>
-
-        {/* NAME */}
         <input
-          className="w-full p-2 border rounded"
           placeholder="Name"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
 
-        {/* TYPE */}
         <select
-          className="w-full p-2 border rounded"
           value={form.type}
           onChange={(e) => setForm({ ...form, type: e.target.value })}
         >
-          <option value="">Select Type</option>
+          <option value="">Type</option>
           <option value="fulltime">Full Time</option>
           <option value="parttime">Part Time</option>
           <option value="manager">Manager</option>
         </select>
 
-        {/* SALARY */}
-        {form.type === 'Employee' && (
-          <input
-            className="w-full p-2 border rounded"
-            placeholder="Salary"
-            type="number"
-            value={form.salary}
-            onChange={(e) =>
-              setForm({ ...form, salary: e.target.value })
-            }
-          />
-        )}
-
-        {/* WORKER */}
-        {form.type === 'Worker' && (
-          <>
-            <input
-              className="w-full p-2 border rounded"
-              placeholder="Hourly Rate"
-              type="number"
-              value={form.hourly_rate}
-              onChange={(e) =>
-                setForm({ ...form, hourly_rate: e.target.value })
-              }
-            />
-
-            <input
-              className="w-full p-2 border rounded"
-              placeholder="Hours"
-              type="number"
-              value={form.hours}
-              onChange={(e) =>
-                setForm({ ...form, hours: e.target.value })
-              }
-            />
-          </>
-        )}
-
-        {/* MANAGER */}
-        {form.type === 'Manager' && (
-          <>
-            <input
-              className="w-full p-2 border rounded"
-              placeholder="Bonus"
-              type="number"
-              value={form.bonus}
-              onChange={(e) =>
-                setForm({ ...form, bonus: e.target.value })
-              }
-            />
-
-            <input
-              className="w-full p-2 border rounded"
-              placeholder="Team Size"
-              type="number"
-              value={form.team_size}
-              onChange={(e) =>
-                setForm({ ...form, team_size: e.target.value })
-              }
-            />
-          </>
-        )}
-
-        {/* BUTTONS */}
-        <div className="flex justify-between pt-2">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Save
-          </button>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="bg-gray-400 px-4 py-2 rounded"
-          >
-            Cancel
-          </button>
-        </div>
+        <button className="bg-blue-500 text-white px-4 py-2">
+          Save
+        </button>
       </form>
     </div>
   );
