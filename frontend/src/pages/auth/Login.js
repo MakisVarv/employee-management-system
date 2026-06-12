@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const { login } = useContext(AuthContext);
@@ -50,6 +50,14 @@ export default function Login() {
         <button className="w-full bg-blue-500 text-white p-2">
           Login
         </button>
+        <Link to="/register">
+          <button
+            type="button"
+            className=" text-blue-600 px-4 py-2 rounded"
+          >
+            Register
+          </button>
+        </Link>
       </form>
     </div>
   );

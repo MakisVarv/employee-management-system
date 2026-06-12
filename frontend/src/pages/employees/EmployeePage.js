@@ -10,7 +10,7 @@ export default function EmployeePage() {
   const fetchEmployees = () => {
     axios
       .get('http://127.0.0.1:8001/employees')
-      .then((res) => setEmployees(res.data));
+      .then((res) => setEmployees(res.data.data));
   };
 
   useEffect(() => {
