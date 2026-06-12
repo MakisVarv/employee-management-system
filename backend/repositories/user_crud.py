@@ -1,12 +1,14 @@
 from sqlalchemy.orm import Session
-from models.user import User
+from models.user import User, Role
 from schemas.user_schema import UserCreate, UserRoleUpdate
 from security.settings import hash_password
 
 
 def create_user(db: Session, user: UserCreate):
     db_user = User(
-        username=user.username, password=hash_password(user.password), role=user.role
+        username=user.username,
+        password=hash_password(user.password),
+        role=Role.USER,
     )
     db.add(db_user)
     db.commit()

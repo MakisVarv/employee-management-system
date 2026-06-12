@@ -8,12 +8,17 @@ from sqlalchemy import asc, desc
 import pandas as pd
 from fastapi.responses import StreamingResponse
 import io
+from security.settings import get_current_user, manager_or_admin_required
 
 employee_router = APIRouter(prefix="/employees")
 
 
 @employee_router.post("/")
-def create(emp: EmployeeCreate, db: Session = Depends(get_db)):
+def create(
+    emp: EmployeeCreate,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(get_current_user),
+):
     return create_employee(db, emp)
 
 
@@ -26,6 +31,7 @@ def read(
     sort_by: str = "id",
     order: str = "asc",
     db: Session = Depends(get_db),
+    payload: dict = Depends(get_current_user),
 ):
     return get_employees(
         db,
@@ -39,7 +45,10 @@ def read(
 
 
 @employee_router.get("/export")
-def export_employees(db: Session = Depends(get_db)):
+def export_employees(
+    db: Session = Depends(get_db),
+    payload: dict = Depends(get_current_user),
+):
     employees = db.query(Employee).all()
 
     data = [
@@ -71,12 +80,25 @@ def export_employees(db: Session = Depends(get_db)):
 
 
 @employee_router.delete("/{emp_id}")
-def delete(emp_id: int, db: Session = Depends(get_db)):
-    return delete_employee(db, emp_id)
+def delete(
+    emp_id: int,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(manager_or_admin_required),
+):
+    deleted_employee = delete_employee(db, emp_id)
+    if deleted_employee is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Employee not found"
+        )
+    return {"message": "Employee deleted successfully"}
 
 
 @employee_router.get("/{emp_id}", response_model=EmployeeResponse)
-def get_employee(emp_id: int, db: Session = Depends(get_db)):
+def get_employee(
+    emp_id: int,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(get_current_user),
+):
     emp = db.query(Employee).filter(Employee.id == emp_id).first()
 
     if not emp:
@@ -89,7 +111,12 @@ def get_employee(emp_id: int, db: Session = Depends(get_db)):
 
 
 @employee_router.put("/{emp_id}")
-def update_employee(emp_id: int, emp: EmployeeCreate, db: Session = Depends(get_db)):
+def update_employee(
+    emp_id: int,
+    emp: EmployeeCreate,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(get_current_user),
+):
     db_emp = db.query(Employee).filter(Employee.id == emp_id).first()
 
     if not db_emp:

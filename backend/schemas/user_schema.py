@@ -5,7 +5,6 @@ from models.user import Role
 class UserCreate(BaseModel):
     username: str
     password: str
-    role: Role = Role.USER
 
 
 class UserResponse(BaseModel):
