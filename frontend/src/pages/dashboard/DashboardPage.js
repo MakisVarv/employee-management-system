@@ -1,21 +1,30 @@
 import KPIs from './KPIs';
 import Charts from './Charts';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
+import API from '../../services/api';
 
 export default function DashboardPage() {
-  const [employees, setEmployees] = useState([]);
+  const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    axios
-      .get('http://127.0.0.1:8001/employees')
-      .then((res) => setEmployees(res.data));
+    API.get('/dashboard/summary')
+      .then((res) => setSummary(res.data))
+      .catch(() => setError('Failed to load dashboard summary'))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
     <>
-      <KPIs employees={employees} />
-      <Charts employees={employees} />
+      {loading && <p>Loading dashboard...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+      {!loading && !error && (
+        <>
+          <KPIs summary={summary} />
+          <Charts summary={summary} />
+        </>
+      )}
     </>
   );
 }

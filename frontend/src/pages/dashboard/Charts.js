@@ -10,22 +10,19 @@ import {
   CartesianGrid,
 } from 'recharts';
 
-export default function Charts({ employees }) {
+export default function Charts({ summary }) {
   const data = [
     {
       name: 'Full Time',
-      value: employees.data?.filter((e) => e.type === 'fulltime')
-        .length,
+      value: summary?.fulltimeEmployees || 0,
     },
     {
       name: 'Part Time',
-      value: employees.data?.filter((e) => e.type === 'parttime')
-        .length,
+      value: summary?.parttimeEmployees || 0,
     },
     {
       name: 'Managers',
-      value: employees.data?.filter((e) => e.type === 'manager')
-        .length,
+      value: summary?.managers || 0,
     },
   ];
 
