@@ -27,7 +27,7 @@ export default function EmployeeList() {
   const currentQuery = { page, search, type, sort, order };
   useEffect(() => {
     dispatch(fetchEmployees({ page, search, type, sort, order }));
-  }, [page, search, type, sort, order]);
+  }, [page, search, type, sort, order, dispatch]);
 
   const totalPages = Math.ceil(total / 10);
 

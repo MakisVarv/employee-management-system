@@ -32,8 +32,9 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exists!"
         )
     validate_password(user.password)
-    create_user(db, user)
-    return {"message": "User created successfully"}
+    created_user = create_user(db, user)
+
+    return created_user
 
 
 @user_router.post("/login")

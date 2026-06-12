@@ -15,6 +15,7 @@ export default function UserPage() {
   );
 
   useEffect(() => {
+    setLoading(true);
     API.get('/users')
       .then((res) => {
         setUsers(res.data);
