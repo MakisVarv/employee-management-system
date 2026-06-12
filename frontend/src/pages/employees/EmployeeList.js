@@ -28,6 +28,25 @@ export default function EmployeeList() {
   }, [page, search, type, sort, order]);
 
   const totalPages = Math.ceil(total / 10);
+
+  const handleExport = async () => {
+    const res = await fetch(
+      'http://localhost:8001/employees/export',
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      },
+    );
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'employees.csv';
+    a.click();
+  };
   return (
     <div>
       <div>
@@ -58,12 +77,21 @@ export default function EmployeeList() {
       {!loading && list.length === 0 && (
         <p className="text-gray-500">No employees found</p>
       )}
-      <button
-        className="mb-4 bg-green-500 text-white px-4 py-2 rounded"
-        onClick={() => setShowModal(true)}
-      >
-        + Add Employee
-      </button>
+      <div>
+        <button
+          className="mb-4 bg-green-500 text-white px-4 py-2 rounded"
+          onClick={() => setShowModal(true)}
+        >
+          + Add Employee
+        </button>
+        <button
+          onClick={handleExport}
+          className="bg-indigo-500 text-white px-4 py-2 rounded mb-4"
+        >
+          Export CSV
+        </button>
+      </div>
+
       <div className="bg-white shadow rounded">
         <table className="w-full">
           <thead className="bg-gray-200">

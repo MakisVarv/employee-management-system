@@ -5,6 +5,9 @@ from models.employee import Employee
 from schemas.employee_schema import EmployeeCreate, EmployeeResponse
 from database.connection import get_db
 from sqlalchemy import asc, desc
+import pandas as pd
+from fastapi.responses import StreamingResponse
+import io
 
 employee_router = APIRouter(prefix="/employees")
 
@@ -32,6 +35,38 @@ def read(
         type=type,
         sort_by=sort_by,
         order=order,
+    )
+
+
+@employee_router.get("/export")
+def export_employees(db: Session = Depends(get_db)):
+    employees = db.query(Employee).all()
+
+    data = [
+        {
+            "ID": e.id,
+            "Name": e.name,
+            "Type": e.type,
+            "Salary": e.salary,
+            "Hourly Rate": e.hourly_rate,
+            "Hours": e.hours,
+            "Bonus": e.bonus,
+            "Team Size": e.team_size,
+        }
+        for e in employees
+    ]
+
+    df = pd.DataFrame(data)
+
+    output = io.StringIO()
+    df.to_csv(output, index=False)
+
+    output.seek(0)
+
+    return StreamingResponse(
+        output,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=employees.csv"},
     )
 
 
