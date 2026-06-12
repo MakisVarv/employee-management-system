@@ -117,7 +117,6 @@ employee-management-system/
 │   ├── security/
 │   ├── main.py
 │   ├── Dockerfile
-│   └── .env.example
 │
 ├── frontend/
 │   ├── src/
