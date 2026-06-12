@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import API from '../../services/api';
 import EmployeeList from '../../pages/employees/EmployeeList';
 
 export default function EmployeePage() {
@@ -8,9 +8,7 @@ export default function EmployeePage() {
   const [type, setType] = useState('');
 
   const fetchEmployees = () => {
-    axios
-      .get('http://127.0.0.1:8001/employees')
-      .then((res) => setEmployees(res.data.data));
+    API.get('/employees').then((res) => setEmployees(res.data.data));
   };
 
   useEffect(() => {
@@ -27,30 +25,7 @@ export default function EmployeePage() {
   return (
     <>
       <h1 className="text-2xl font-bold mb-4">Employees</h1>
-
-      <div className="flex gap-4 mb-4">
-        <input
-          placeholder="Search..."
-          className="p-2 border rounded"
-          onChange={(e) => setSearch(e.target.value)}
-        />
-
-        <select
-          className="p-2 border rounded"
-          onChange={(e) => setType(e.target.value)}
-        >
-          <option value="">All</option>
-          <option value="fulltime">Full Time</option>
-          <option value="parttime">Part Time</option>
-          <option value="manager">Manager</option>
-        </select>
-      </div>
-
-      <EmployeeList
-        employees={filtered}
-        setEmployees={setEmployees}
-        refresh={fetchEmployees}
-      />
+      <EmployeeList />
     </>
   );
 }

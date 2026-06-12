@@ -20,25 +20,43 @@ export const fetchEmployees = createAsyncThunk(
 );
 export const addEmployee = createAsyncThunk(
   'employees/add',
-  async (data) => {
-    const res = await API.post('/employees', data);
-    return res.data;
+  async (data, { rejectWithValue }) => {
+    try {
+      const res = await API.post('/employees', data);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.detail || 'Failed to add employee',
+      );
+    }
   },
 );
 
 export const deleteEmployee = createAsyncThunk(
   'employees/delete',
-  async (id) => {
-    await API.delete(`/employees/${id}`);
-    return id;
+  async (id, { rejectWithValue }) => {
+    try {
+      await API.delete(`/employees/${id}`);
+      return id;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.detail || 'Failed to delete employee',
+      );
+    }
   },
 );
 
 export const updateEmployee = createAsyncThunk(
   'employees/update',
-  async ({ id, data }) => {
-    const res = await API.put(`/employees/${id}`, data);
-    return res.data;
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const res = await API.put(`/employees/${id}`, data);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.detail || 'Failed to update employee',
+      );
+    }
   },
 );
 

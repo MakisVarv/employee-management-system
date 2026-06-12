@@ -7,6 +7,7 @@ import {
   fetchEmployees,
   deleteEmployee,
 } from '../../store/employeesSlice';
+import API from '../../services/api';
 
 export default function EmployeeList() {
   const dispatch = useDispatch();
@@ -23,49 +24,85 @@ export default function EmployeeList() {
   const [sort, setSort] = useState('id');
   const [order, setOrder] = useState('asc');
 
+  const currentQuery = { page, search, type, sort, order };
   useEffect(() => {
     dispatch(fetchEmployees({ page, search, type, sort, order }));
   }, [page, search, type, sort, order]);
 
   const totalPages = Math.ceil(total / 10);
 
+  const handleDelete = async (id) => {
+    try {
+      await dispatch(deleteEmployee(id)).unwrap();
+      await dispatch(fetchEmployees(currentQuery)).unwrap();
+      toast.success('Employee deleted');
+    } catch (error) {
+      toast.error(
+        typeof error === 'string'
+          ? error
+          : 'Failed to delete employee',
+      );
+    }
+  };
+
   const handleExport = async () => {
-    const res = await fetch(
-      'http://localhost:8001/employees/export',
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
-      },
-    );
+    try {
+      const res = await API.get('/employees/export', {
+        responseType: 'blob',
+      });
 
-    const blob = await res.blob();
-    const url = window.URL.createObjectURL(blob);
+      const blob = new Blob([res.data], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
 
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'employees.csv';
-    a.click();
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'employees.csv';
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+
+      toast.success('CSV exported');
+    } catch (error) {
+      toast.error('Failed to export CSV');
+    }
   };
   return (
     <div>
       <div>
         <input
           placeholder="Search..."
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(0);
+          }}
         />
-        <select onChange={(e) => setType(e.target.value)}>
+        <select
+          onChange={(e) => {
+            setType(e.target.value);
+            setPage(0);
+          }}
+        >
           <option value="">All</option>
           <option value="fulltime">Full Time</option>
           <option value="parttime">Part Time</option>
           <option value="manager">Manager</option>
         </select>
-        <select onChange={(e) => setSort(e.target.value)}>
+        <select
+          onChange={(e) => {
+            setSort(e.target.value);
+            setPage(0);
+          }}
+        >
           <option value="id">ID</option>
           <option value="name">Name</option>
         </select>
 
-        <select onChange={(e) => setOrder(e.target.value)}>
+        <select
+          onChange={(e) => {
+            setOrder(e.target.value);
+            setPage(0);
+          }}
+        >
           <option value="asc">ASC</option>
           <option value="desc">DESC</option>
         </select>
@@ -123,10 +160,7 @@ export default function EmployeeList() {
                     user?.role === 'Manager') && (
                     <button
                       className="bg-red-500 text-white px-2 py-1 rounded"
-                      onClick={() => {
-                        dispatch(deleteEmployee(emp.id));
-                        toast.success('Employee deleted');
-                      }}
+                      onClick={() => handleDelete(emp.id)}
                     >
                       Delete
                     </button>
@@ -153,6 +187,7 @@ export default function EmployeeList() {
       {showModal && (
         <EmployeeModal
           employee={selected}
+          onSaved={() => dispatch(fetchEmployees(currentQuery))}
           onClose={() => {
             setShowModal(false);
             setSelected(null);

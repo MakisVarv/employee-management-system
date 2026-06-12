@@ -6,7 +6,11 @@ import {
 } from '../../store/employeesSlice';
 import { toast } from 'react-toastify';
 
-export default function EmployeeModal({ employee, onClose }) {
+export default function EmployeeModal({
+  employee,
+  onClose,
+  onSaved,
+}) {
   const dispatch = useDispatch();
 
   const [form, setForm] = useState({
@@ -22,19 +26,44 @@ export default function EmployeeModal({ employee, onClose }) {
   useEffect(() => {
     if (employee) setForm(employee);
   }, [employee]);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (employee) {
-      dispatch(updateEmployee({ id: employee.id, data: form }));
-      toast.success('Employee updated');
-    } else {
-      dispatch(addEmployee(form));
-      toast.success('Employee added');
+    const payload = {
+      ...form,
+      name: form.name.trim(),
+    };
+
+    if (payload.name.length < 2) {
+      toast.error('Employee name must be at least 2 characters');
+      return;
     }
 
-    onClose();
+    if (!payload.type) {
+      toast.error('Please select an employee type');
+      return;
+    }
+
+    try {
+      if (employee) {
+        await dispatch(
+          updateEmployee({ id: employee.id, data: payload }),
+        ).unwrap();
+
+        toast.success('Employee updated');
+      } else {
+        await dispatch(addEmployee(payload)).unwrap();
+
+        toast.success('Employee added');
+      }
+
+      await onSaved();
+      onClose();
+    } catch (error) {
+      toast.error(
+        typeof error === 'string' ? error : 'Failed to save employee',
+      );
+    }
   };
 
   return (
@@ -59,8 +88,19 @@ export default function EmployeeModal({ employee, onClose }) {
           <option value="manager">Manager</option>
         </select>
 
-        <button className="bg-blue-500 text-white px-4 py-2">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2"
+        >
           Save
+        </button>
+
+        <button
+          type="button"
+          onClick={onClose}
+          className="bg-gray-400 text-white px-4 py-2"
+        >
+          Cancel
         </button>
       </form>
     </div>
