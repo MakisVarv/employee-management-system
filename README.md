@@ -1,63 +1,135 @@
 # Employee Management System
 
-Employee Management System is a full-stack web application built with React and FastAPI.  
-The project focuses on employee data management, API integration, authentication, and role-based access logic.
+A full-stack **Employee Management System** built with **React**, **FastAPI**, **SQLAlchemy**, and **MySQL**.
 
-It was built as a practical project to strengthen modern full-stack development skills using a React frontend and a Python-based FastAPI backend.
+This project is designed as a portfolio-level business application that demonstrates authentication, role-based permissions, employee operations, user management, dashboard analytics, and modern React/Python full-stack architecture.
+
+---
+
+## Project Overview
+
+The application allows authenticated users to manage employee records through a clean dashboard interface. It includes role-based access control, employee search/filter/sort/pagination, CSV export, dashboard analytics, and an admin-seeded user management system.
+
+The main goal of this project is to demonstrate practical employability skills in a React + Python stack:
+
+- Building a REST API with FastAPI
+- Designing protected backend routes
+- Managing authentication with JWT
+- Handling role-based authorization
+- Connecting React to a backend API
+- Managing server state with Redux Toolkit
+- Working with SQLAlchemy models and repositories
+- Creating dashboard analytics from backend data
+- Running the app with Docker-based development setup
+
+---
 
 ## Tech Stack
 
 ### Frontend
+
 - React
 - React Router
+- Redux Toolkit
 - Axios
-- Tailwind CSS
 - Recharts
+- Tailwind CSS
+- React Toastify
 
 ### Backend
-- Python
-- FastAPI
-- SQLAlchemy + MySQL
-- JWT authentication
-- Role-based authorization
 
-### Tools
+- FastAPI
+- SQLAlchemy
+- Pydantic
+- JWT authentication
+- Argon2 password hashing
+- Repository-style data access
+
+### Database / DevOps
+
+- MySQL
 - Docker Compose
-- REST APIs
+- Environment-based configuration
+- Admin account seeding
+
+---
 
 ## Features
 
-- Employee CRUD functionality
-- User registration and login
-- Access and refresh token generation
-- Role-based access structure
-- User roles: User, Manager, Admin
-- Separate frontend and backend project structure
-- REST API communication between React and FastAPI
+### Authentication
+
+- Public user registration
+- Secure password hashing
+- JWT login
+- Access token-based route protection
+- Seeded admin account for first deployment
+
+### Authorization
+
+- Role-based access control
+- User, Manager, and Admin roles
+- Managers/Admins can view users
+- Admins can edit roles and delete users
+- Managers/Admins can delete employees
+
+### Employee Management
+
+- Create employees
+- View employees
+- Update employees
+- Delete employees with role restrictions
+- Search employees by name
+- Filter employees by type
+- Sort employees
+- Backend pagination
+- CSV export
+
+### User Management
+
+- View registered users
+- Search users
+- Filter users by role
+- Admin role editing
+- Admin user deletion
+
+### Dashboard
+
+- Dashboard summary endpoint
+- Total employee count
+- Employee type distribution
+- Average salary
+- Charts using Recharts
+- Backend-calculated analytics instead of frontend-only paginated calculations
+
+---
 
 ## Project Structure
 
-- `frontend/` - React client application
-- `backend/` - FastAPI backend application
-- `backend/routes/` - API route definitions
-- `backend/models/` - SQLAlchemy models
-- `backend/schemas/` - request/response schemas
-- `backend/repositories/` - database access logic
-
-## Purpose
-
-This project was built to practice modern full-stack development with React and Python-based backend technologies.  
-It focuses on API design, authentication flow, role handling, frontend-backend separation, and building a structured application beyond a simple CRUD example.
-
-## Status
-
-In progress.
-
-Planned improvements may include:
-- UI refinement
-- Better form validation
-- Search and filtering
-- More complete dashboard views
-- Improved error handling
-- Database setup documentation
-- Deployment configuration
+```txt
+employee-management-system/
+│
+├── backend/
+│   ├── database/
+│   ├── models/
+│   ├── repositories/
+│   ├── routes/
+│   ├── schemas/
+│   ├── security/
+│   ├── main.py
+│   ├── Dockerfile
+│   └── .env.example
+│
+├── frontend/
+│   ├── src/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── store/
+│   │   └── App.js
+│   ├── Dockerfile
+│   └── package.json
+│
+├── docker-compose.yml
+├── .gitignore
+└── README.md
+```
