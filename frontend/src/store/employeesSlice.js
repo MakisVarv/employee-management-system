@@ -18,6 +18,20 @@ export const fetchEmployees = createAsyncThunk(
     return res.data;
   },
 );
+export const getEmployee = createAsyncThunk(
+  'employees/get',
+  async (id, { rejectWithValue }) => {
+    try {
+      const res = await API.get(`/employees/${id}`);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.detail || 'Failed to get employee',
+      );
+    }
+  },
+);
+
 export const addEmployee = createAsyncThunk(
   'employees/add',
   async (data, { rejectWithValue }) => {

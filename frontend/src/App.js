@@ -11,6 +11,7 @@ import UserPage from './pages/users/UserPage';
 import ProfilePage from './pages/profile/profile';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import EmployeeForm from './pages/employees/EmployeeForm';
 
 export default function App() {
   return (
@@ -39,6 +40,26 @@ export default function App() {
               <ProtectedRoute>
                 <Layout>
                   <EmployeePage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/employees/:editId/edit"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <EmployeeForm />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/employees/new"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <EmployeeForm />
                 </Layout>
               </ProtectedRoute>
             }
