@@ -11,7 +11,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     API.get(`/me/${user.id}`).then((res) => setForm(res.data));
-  }, []);
+  }, [user.id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

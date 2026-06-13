@@ -8,6 +8,7 @@ import {
   deleteEmployee,
 } from '../../store/employeesSlice';
 import API from '../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 export default function EmployeeList() {
   const dispatch = useDispatch();
@@ -23,7 +24,7 @@ export default function EmployeeList() {
   const [type, setType] = useState('');
   const [sort, setSort] = useState('id');
   const [order, setOrder] = useState('asc');
-
+  const navigate = useNavigate();
   const currentQuery = { page, search, type, sort, order };
   useEffect(() => {
     dispatch(fetchEmployees({ page, search, type, sort, order }));
@@ -66,119 +67,205 @@ export default function EmployeeList() {
       toast.error('Failed to export CSV');
     }
   };
-  return (
-    <div>
-      <div>
-        <input
-          placeholder="Search..."
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(0);
-          }}
-        />
-        <select
-          onChange={(e) => {
-            setType(e.target.value);
-            setPage(0);
-          }}
-        >
-          <option value="">All</option>
-          <option value="fulltime">Full Time</option>
-          <option value="parttime">Part Time</option>
-          <option value="manager">Manager</option>
-        </select>
-        <select
-          onChange={(e) => {
-            setSort(e.target.value);
-            setPage(0);
-          }}
-        >
-          <option value="id">ID</option>
-          <option value="name">Name</option>
-        </select>
+  const typeLabels = {
+    fulltime: 'Full Time',
+    parttime: 'Part Time',
+    manager: 'Manager',
+  };
 
-        <select
-          onChange={(e) => {
-            setOrder(e.target.value);
-            setPage(0);
-          }}
-        >
-          <option value="asc">ASC</option>
-          <option value="desc">DESC</option>
-        </select>
+  return (
+    <div className="space-y-6">
+      <div className="bg-white rounded-xl shadow p-4">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">
+                Search
+              </label>
+              <input
+                value={search}
+                placeholder="Search by name..."
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(0);
+                }}
+                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">
+                Type
+              </label>
+              <select
+                value={type}
+                onChange={(e) => {
+                  setType(e.target.value);
+                  setPage(0);
+                }}
+                className="w-full border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">All Types</option>
+                <option value="fulltime">Full Time</option>
+                <option value="parttime">Part Time</option>
+                <option value="manager">Manager</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">
+                Sort By
+              </label>
+              <select
+                value={sort}
+                onChange={(e) => {
+                  setSort(e.target.value);
+                  setPage(0);
+                }}
+                className="w-full border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="id">ID</option>
+                <option value="name">Name</option>
+                <option value="type">Type</option>
+                <option value="salary">Salary</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">
+                Order
+              </label>
+              <select
+                value={order}
+                onChange={(e) => {
+                  setOrder(e.target.value);
+                  setPage(0);
+                }}
+                className="w-full border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-sm"
+              onClick={() => {
+                if (
+                  user?.role === 'Admin' ||
+                  user?.role === 'Manager'
+                ) {
+                  navigate('/employees/new');
+                } else {
+                  setSelected(null);
+                  setShowModal(true);
+                }
+              }}
+            >
+              + Add Employee
+            </button>
+
+            <button
+              onClick={handleExport}
+              className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm"
+            >
+              Export CSV
+            </button>
+          </div>
+        </div>
       </div>
-      <h1 className="text-2xl font-bold mb-4">Employees</h1>
-      {loading && (
-        <p className="text-blue-500 mb-4">Loading employees...</p>
-      )}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-600">
+          {total} employee{total === 1 ? '' : 's'} found
+        </p>
+
+        {loading && (
+          <p className="text-sm text-blue-500">
+            Loading employees...
+          </p>
+        )}
+      </div>
       {!loading && list.length === 0 && (
         <p className="text-gray-500">No employees found</p>
       )}
-      <div>
-        <button
-          className="mb-4 bg-green-500 text-white px-4 py-2 rounded"
-          onClick={() => setShowModal(true)}
-        >
-          + Add Employee
-        </button>
-        <button
-          onClick={handleExport}
-          className="bg-indigo-500 text-white px-4 py-2 rounded mb-4"
-        >
-          Export CSV
-        </button>
-      </div>
 
-      <div className="bg-white shadow rounded">
-        <table className="w-full">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="p-3">Name</th>
-              <th className="p-3">Type</th>
-              <th className="p-3">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {list.map((emp) => (
-              <tr key={emp.id}>
-                <td className="p-3">{emp.name}</td>
-                <td className="p-3">{emp.type}</td>
-
-                <td className="p-3 space-x-2">
-                  <button
-                    className="bg-blue-500 text-white px-2 py-1 rounded"
-                    onClick={() => {
-                      setSelected(emp);
-                      setShowModal(true);
-                    }}
-                  >
-                    Edit
-                  </button>
-
-                  {(user?.role === 'Admin' ||
-                    user?.role === 'Manager') && (
-                    <button
-                      className="bg-red-500 text-white px-2 py-1 rounded"
-                      onClick={() => handleDelete(emp.id)}
-                    >
-                      Delete
-                    </button>
-                  )}
-                </td>
+      <div className="bg-white shadow rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-gray-100 text-gray-700 text-sm uppercase">
+              <tr>
+                <th className="p-4">Name</th>
+                <th className="p-4">Type</th>
+                <th className="p-4 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {list.map((emp) => (
+                <tr
+                  key={emp.id}
+                  className="border-t hover:bg-gray-50"
+                >
+                  <td className="p-4 font-medium text-gray-800">
+                    {emp.name}
+                  </td>
+                  <td className="p-4">
+                    <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700">
+                      {typeLabels[emp.type] || emp.type}
+                    </span>
+                  </td>
+
+                  <td className="p-4 text-right">
+                    {user?.role === 'User' && (
+                      <button
+                        className="bg-blue-500 text-white px-2 py-1 rounded"
+                        onClick={() => {
+                          setSelected(emp);
+                          setShowModal(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                    )}
+
+                    {(user?.role === 'Admin' ||
+                      user?.role === 'Manager') && (
+                      <div className="inline-flex gap-2">
+                        <button
+                          className="bg-blue-500 text-white px-2 py-1 rounded"
+                          onClick={() => {
+                            navigate(`/employees/${emp.id}/edit`);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="bg-red-500 text-white px-2 py-1 rounded"
+                          onClick={() => handleDelete(emp.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div className="flex gap-2 mt-4">
+      <div className="flex gap-2 justify-end">
         {[...Array(totalPages)].map((_, i) => (
           <button
+            className={`px-3 py-1 border rounded-lg ${
+              page === i
+                ? 'bg-blue-500 text-white border-blue-500'
+                : 'bg-white hover:bg-gray-100'
+            }`}
             key={i}
             onClick={() => setPage(i)}
-            className={`px-3 py-1 border rounded ${
-              page === i ? 'bg-blue-500 text-white' : ''
-            }`}
           >
             {i + 1}
           </button>
