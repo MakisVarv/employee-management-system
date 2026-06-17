@@ -21,10 +21,12 @@ export default function ProfilePage() {
     }));
   };
 
-  const handleSubmit = () => {
-    API.put(`/me/${user.id}`, form).then(() =>
-      alert('Profile updated!'),
-    );
+  const handleSubmit = async () => {
+    try {
+      await API.put(`/me/${user.id}`, form);
+    } catch (error) {
+      // Global interceptor already showed the error.
+    }
   };
 
   return (
@@ -39,13 +41,13 @@ export default function ProfilePage() {
         placeholder="username"
       />
 
-      {/* <input
+      <input
         name="email"
         value={form.email}
         onChange={handleChange}
         className="w-full p-2 border mb-3 rounded"
         placeholder="Email"
-      /> */}
+      />
 
       <button
         onClick={handleSubmit}

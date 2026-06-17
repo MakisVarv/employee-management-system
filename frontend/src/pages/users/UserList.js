@@ -32,6 +32,7 @@ export default function UserList({ users, setUsers }) {
           <thead>
             <tr className="border-b">
               <th className="p-2">Username</th>
+              <th className="p-2">E-mail</th>
               <th className="p-2">Role</th>
               {user?.role === 'Admin' && (
                 <th className="p-3">Actions</th>
@@ -43,6 +44,7 @@ export default function UserList({ users, setUsers }) {
             {users.map((u) => (
               <tr key={u.id} className="border-b">
                 <td className="p-2">{u.username}</td>
+                <td className="p-2">{u.email}</td>
                 <td className="p-2">{u.role}</td>
                 {user?.role === 'Admin' && (
                   <td className="p-3 space-x-2">

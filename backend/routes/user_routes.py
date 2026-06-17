@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 from repositories.user_crud import (
     create_user,
     delete_user,
+    get_user_by_email,
     get_user_by_username,
     get_users,
     update_role_name,
@@ -30,6 +31,11 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     if get_user_by_username(db, user.username):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exists!"
+        )
+    if get_user_by_email(db, user.email):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already exists!",
         )
     validate_password(user.password)
     created_user = create_user(db, user)

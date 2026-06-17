@@ -24,8 +24,8 @@ def get_employees(db, skip, limit, search, type, sort_by, order):
         query = query.order_by(desc(column))
     else:
         query = query.order_by(asc(column))
-        total = query.count()
-        data = query.offset(skip).limit(limit).all()
+    total = query.count()
+    data = query.offset(skip).limit(limit).all()
 
     return {
         "data": data,

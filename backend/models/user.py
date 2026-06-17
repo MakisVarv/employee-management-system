@@ -16,5 +16,6 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     username = Column(String(50), unique=True)
+    email = Column(String(255), unique=True, nullable=False)
     password = Column(String(100), nullable=False)
     role: Mapped[Role] = mapped_column(SAEnum(Role), default=Role.USER)

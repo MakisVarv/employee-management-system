@@ -1,7 +1,8 @@
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, status
 
 import uvicorn
 from sqlalchemy.orm import Session
+from repositories.user_crud import get_user_by_email
 from models.user import User
 from schemas.user_schema import UserResponse, UserUpdate
 from database.connection import engine, Base, get_db
@@ -52,6 +53,16 @@ def get_me(user_id: int, db: Session = Depends(get_db)):
 @app.put("/me/{user_id}")
 def update_me(user_id: int, data: UserUpdate, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
+
+    email_owner = (
+        db.query(User).filter(User.email == data.email, User.id != user_id).first()
+    )
+
+    if email_owner:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already exists!",
+        )
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

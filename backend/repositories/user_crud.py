@@ -7,6 +7,7 @@ from security.settings import hash_password
 def create_user(db: Session, user: UserCreate):
     db_user = User(
         username=user.username,
+        email=user.email,
         password=hash_password(user.password),
         role=Role.USER,
     )
@@ -22,6 +23,10 @@ def get_users(db: Session):
 
 def get_user_by_username(db: Session, username: str):
     return db.query(User).filter(User.username == username).first()
+
+
+def get_user_by_email(db: Session, email: str):
+    return db.query(User).filter(User.email == email).first()
 
 
 def update_role_name(db: Session, user_id, role_update: UserRoleUpdate):

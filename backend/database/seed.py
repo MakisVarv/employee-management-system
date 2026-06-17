@@ -13,10 +13,11 @@ def seed_admin(db: Session):
 
     username = os.getenv("ADMIN_USERNAME")
     password = os.getenv("ADMIN_PASSWORD")
+    email = os.getenv("ADMIN_EMAIL")
 
-    if not username or not password:
+    if not username or not password or not email:
         raise RuntimeError(
-            "SEED_ADMIN is true, but ADMIN_USERNAME or ADMIN_PASSWORD is missing"
+            "SEED_ADMIN is true, but ADMIN_USERNAME, ADMIN_EMAIL, or ADMIN_PASSWORD is missing"
         )
 
     existing_admin = db.query(User).filter(User.role == Role.ADMIN).first()
@@ -35,6 +36,7 @@ def seed_admin(db: Session):
 
     admin = User(
         username=username,
+        email=email,
         password=hash_password(password),
         role=Role.ADMIN,
     )

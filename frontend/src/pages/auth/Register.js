@@ -8,6 +8,7 @@ export default function Register() {
 
   const [form, setForm] = useState({
     username: '',
+    email: '',
     password: '',
   });
 
@@ -38,7 +39,13 @@ export default function Register() {
           name="username"
           onChange={handleChange}
         />
-
+        <input
+          className="w-full mb-2 p-2 border"
+          placeholder="Email"
+          name="email"
+          type="email"
+          onChange={handleChange}
+        />
         <input
           type="password"
           className="w-full mb-4 p-2 border"

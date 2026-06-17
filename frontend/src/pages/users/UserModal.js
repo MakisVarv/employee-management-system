@@ -6,6 +6,7 @@ export default function UserModal({ userToEdit, onClose, setUsers }) {
 
   const [form, setForm] = useState({
     username: userToEdit?.username || '',
+    email: userToEdit?.email || '',
     password: '',
     role: userToEdit?.role || 'User',
   });
@@ -59,7 +60,15 @@ export default function UserModal({ userToEdit, onClose, setUsers }) {
               placeholder="Username"
               className="w-full border p-2 rounded"
             />
-
+            <input
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              readOnly={isEditMode}
+              placeholder="Email"
+              className="w-full border p-2 rounded"
+            />
             {!isEditMode && (
               <input
                 name="password"

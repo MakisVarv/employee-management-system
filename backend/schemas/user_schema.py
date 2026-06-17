@@ -1,15 +1,17 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from models.user import Role
 
 
 class UserCreate(BaseModel):
     username: str
+    email: EmailStr
     password: str
 
 
 class UserResponse(BaseModel):
     id: int
     username: str
+    email: EmailStr
     role: Role
 
 
@@ -29,3 +31,4 @@ class UserRoleUpdate(BaseModel):
 
 class UserUpdate(BaseModel):
     username: str
+    email: EmailStr
