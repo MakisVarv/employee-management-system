@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float
 from database.connection import Base
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
 
 
 class Employee(Base):
@@ -13,3 +15,5 @@ class Employee(Base):
     hours = Column(Integer)
     bonus = Column(Float)
     team_size = Column(Integer)
+    department_id = Column(Integer, ForeignKey("departments.id"))
+    department = relationship("Department")

@@ -198,6 +198,7 @@ export default function EmployeeList() {
               <tr>
                 <th className="p-4">Name</th>
                 <th className="p-4">Type</th>
+                <th className="p-4">Department</th>
                 <th className="p-4 text-right">Actions</th>
               </tr>
             </thead>
@@ -215,6 +216,9 @@ export default function EmployeeList() {
                     <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700">
                       {typeLabels[emp.type] || emp.type}
                     </span>
+                  </td>
+                  <td className="p-3">
+                    {emp.department?.name || '-'}
                   </td>
 
                   <td className="p-4 text-right">

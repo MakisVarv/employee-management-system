@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import API from '../../services/api';
 import { useDispatch } from 'react-redux';
 import {
   addEmployee,
@@ -12,6 +13,11 @@ export default function EmployeeModal({
   onSaved,
 }) {
   const dispatch = useDispatch();
+  const [departments, setDepartments] = useState([]);
+
+  useEffect(() => {
+    API.get('/departments/').then((res) => setDepartments(res.data));
+  }, []);
 
   const [form, setForm] = useState({
     name: '',
@@ -86,6 +92,20 @@ export default function EmployeeModal({
           <option value="fulltime">Full Time</option>
           <option value="parttime">Part Time</option>
           <option value="manager">Manager</option>
+        </select>
+        <select
+          className="w-full p-2 border rounded"
+          value={form.department_id}
+          onChange={(e) =>
+            setForm({ ...form, department_id: e.target.value })
+          }
+        >
+          <option value="">Select Department</option>
+          {departments.map((d) => (
+            <option key={d.id} value={d.id}>
+              {d.name}
+            </option>
+          ))}
         </select>
 
         <button

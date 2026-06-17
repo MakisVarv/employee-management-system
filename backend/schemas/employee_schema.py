@@ -1,5 +1,7 @@
-from typing import Literal, Optional
+from typing import List, Literal, Optional
 from pydantic import BaseModel, Field
+
+from schemas.department_schema import DepartmentResponse
 
 
 class EmployeeCreate(BaseModel):
@@ -10,6 +12,7 @@ class EmployeeCreate(BaseModel):
     hours: Optional[int] = Field(0, ge=0)
     bonus: Optional[float] = Field(0, ge=0)
     team_size: Optional[int] = Field(0, ge=0)
+    department_id: Optional[int] = None
 
 
 class EmployeeResponse(BaseModel):
@@ -21,3 +24,9 @@ class EmployeeResponse(BaseModel):
     hours: Optional[int] = 0
     bonus: Optional[float] = 0
     team_size: Optional[int] = 0
+    department: Optional[DepartmentResponse] = None
+
+
+class EmployeeListResponse(BaseModel):
+    data: List[EmployeeResponse]
+    total: int

@@ -34,6 +34,9 @@ export default function Sidebar() {
             👤 Users
           </Link>
         )}
+        <Link to="/departments" className={linkClass('/departments')}>
+          Departments
+        </Link>
       </nav>
     </div>
   );

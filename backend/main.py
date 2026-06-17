@@ -8,6 +8,7 @@ from database.connection import engine, Base, get_db
 from fastapi.middleware.cors import CORSMiddleware
 from routes.employee_routes import employee_router
 from routes.user_routes import user_router
+from routes.department_routes import department_router
 from routes.dashboard_routes import dashboard_router
 from database.connection import SessionLocal
 from database.seed import seed_admin
@@ -30,6 +31,7 @@ app.add_middleware(
 app.include_router(employee_router)
 app.include_router(user_router)
 app.include_router(dashboard_router)
+app.include_router(department_router)
 
 
 @app.on_event("startup")

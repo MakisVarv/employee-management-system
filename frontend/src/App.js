@@ -12,6 +12,7 @@ import ProfilePage from './pages/profile/profile';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import EmployeeForm from './pages/employees/EmployeeForm';
+import DepartmentPage from './pages/departments/DepartmentPage';
 
 export default function App() {
   return (
@@ -80,6 +81,16 @@ export default function App() {
               <ProtectedRoute>
                 <Layout>
                   <ProfilePage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/departments"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <DepartmentPage />
                 </Layout>
               </ProtectedRoute>
             }

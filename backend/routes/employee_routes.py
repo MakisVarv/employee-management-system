@@ -2,7 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from repositories.employee_crud import create_employee, delete_employee, get_employees
 from models.employee import Employee
-from schemas.employee_schema import EmployeeCreate, EmployeeResponse
+from schemas.employee_schema import (
+    EmployeeCreate,
+    EmployeeListResponse,
+    EmployeeResponse,
+)
 from database.connection import get_db
 from sqlalchemy import asc, desc
 import pandas as pd
@@ -22,7 +26,7 @@ def create(
     return create_employee(db, emp)
 
 
-@employee_router.get("/")
+@employee_router.get("/", response_model=EmployeeListResponse)
 def read(
     skip: int = 0,
     limit: int = 10,

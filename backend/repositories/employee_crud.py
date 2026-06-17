@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from models.employee import Employee
 from sqlalchemy import asc, desc
+from sqlalchemy.orm import joinedload
 
 
 def create_employee(db: Session, emp):
@@ -12,7 +13,7 @@ def create_employee(db: Session, emp):
 
 
 def get_employees(db, skip, limit, search, type, sort_by, order):
-    query = db.query(Employee)
+    query = db.query(Employee).options(joinedload(Employee.department))
     if search:
         query = query.filter(Employee.name.ilike(f"%{search}%"))
     if type:
