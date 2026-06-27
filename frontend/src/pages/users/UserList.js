@@ -9,8 +9,17 @@ export default function UserList({ users, setUsers }) {
   const { user } = useContext(AuthContext);
 
   const handleDelete = async (id) => {
-    await API.delete(`/users/${id}`);
-    setUsers((prev) => prev.filter((e) => e.id !== id));
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this user?',
+    );
+
+    if (!confirmed) return;
+    try {
+      await API.delete(`/users/${id}`);
+      setUsers((prev) => prev.filter((user) => user.id !== id));
+    } catch (error) {
+      // API interceptor already showed the error
+    }
   };
 
   return (
