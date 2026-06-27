@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import API from '../../services/api';
+import { toast } from 'react-toastify';
 
 export default function DepartmentModal({
   department,
@@ -7,6 +8,7 @@ export default function DepartmentModal({
   refresh,
 }) {
   const [name, setName] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (department) setName(department.name);
@@ -14,47 +16,87 @@ export default function DepartmentModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const trimmedName = name.trim();
 
-    if (department) {
-      await API.put(`/departments/${department.id}`, {
-        name,
-      });
-    } else {
-      await API.post('/departments', { name });
+    if (trimmedName.length < 2) {
+      toast.error('Department name must be at least 2 characters');
+      return;
     }
 
-    refresh();
-    onClose();
+    if (isSaving) return;
+
+    try {
+      setIsSaving(true);
+
+      if (department) {
+        await API.put(`/departments/${department.id}`, {
+          name: trimmedName,
+        });
+
+        toast.success('Department updated');
+      } else {
+        await API.post('/departments/', {
+          name: trimmedName,
+        });
+
+        toast.success('Department added');
+      }
+
+      refresh();
+      onClose();
+    } catch (error) {
+      // toast.error('Failed to save department');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded shadow w-80"
+        className="w-full max-w-md bg-white rounded-xl shadow-lg p-6 space-y-5"
       >
-        <h2 className="text-xl mb-4">
-          {department ? 'Edit' : 'Add'} Department
-        </h2>
+        <div>
+          <h2 className="text-xl font-bold">
+            {department ? 'Edit Department' : 'Add Department'}
+          </h2>
+          <p className="text-sm text-gray-500">
+            Departments are used to organize employees.
+          </p>
+        </div>
 
-        <input
-          className="w-full p-2 border mb-4"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Department name"
-        />
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Department Name
+          </label>
 
-        <button className="bg-blue-500 text-white p-2 w-full">
-          Save
-        </button>
+          <input
+            className="w-full border rounded px-3 py-2"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Department name"
+          />
+        </div>
 
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-2 w-full bg-gray-400 p-2"
-        >
-          Cancel
-        </button>
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSaving}
+            className="px-4 py-2 border rounded hover:bg-gray-50 disabled:opacity-60"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            disabled={isSaving}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-60"
+          >
+            {isSaving ? 'Saving...' : 'Save'}
+          </button>
+        </div>
       </form>
     </div>
   );

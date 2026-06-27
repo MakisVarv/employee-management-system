@@ -16,4 +16,4 @@ class Employee(Base):
     bonus = Column(Float)
     team_size = Column(Integer)
     department_id = Column(Integer, ForeignKey("departments.id"))
-    department = relationship("Department")
+    department = relationship("Department", back_populates="employees")

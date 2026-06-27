@@ -35,7 +35,7 @@ export default function Sidebar() {
           </Link>
         )}
         <Link to="/departments" className={linkClass('/departments')}>
-          Departments
+          🏦 Departments
         </Link>
       </nav>
     </div>

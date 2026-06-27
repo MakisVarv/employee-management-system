@@ -24,6 +24,7 @@ class EmployeeResponse(BaseModel):
     hours: Optional[int] = 0
     bonus: Optional[float] = 0
     team_size: Optional[int] = 0
+    department_id: Optional[int] = None
     department: Optional[DepartmentResponse] = None
 
 
