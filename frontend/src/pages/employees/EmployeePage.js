@@ -24,6 +24,7 @@ export default function EmployeePage() {
   const [type, setType] = useState('');
   const [sort, setSort] = useState('id');
   const [order, setOrder] = useState('asc');
+  const [showImportModal, setShowImportModal] = useState(false);
   const navigate = useNavigate();
   const currentQuery = { page, search, type, sort, order };
   useEffect(() => {
@@ -103,7 +104,7 @@ export default function EmployeePage() {
   };
   const handleUpload = async () => {
     if (!file) {
-      alert('Please select a file first');
+      toast.error('Please select a CSV file first');
       return;
     }
 
@@ -115,10 +116,15 @@ export default function EmployeePage() {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      alert('Import successful');
-      fetchEmployees();
+      toast.success('Import successful');
+
+      setFile(null);
+      setPreview([]);
+      setShowImportModal(false);
+
+      dispatch(fetchEmployees(currentQuery));
     } catch (err) {
-      alert('Import failed');
+      toast.error('Import failed');
     }
   };
 
@@ -199,7 +205,7 @@ export default function EmployeePage() {
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <button
               className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-sm"
               onClick={() => {
@@ -223,46 +229,9 @@ export default function EmployeePage() {
             >
               Export CSV
             </button>
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleFileChange}
-            />
-            {preview.length > 0 && (
-              <div className="mt-4">
-                <h3 className="font-bold mb-2">Preview</h3>
-
-                <table className="w-full border">
-                  <thead>
-                    <tr>
-                      {Object.keys(preview[0]).map((key) => (
-                        <th
-                          key={key}
-                          className="border p-2 bg-gray-100"
-                        >
-                          {key}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {preview.map((row, i) => (
-                      <tr key={i}>
-                        {Object.values(row).map((val, j) => (
-                          <td key={j} className="border p-2">
-                            {val}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
             <button
-              onClick={handleUpload}
-              className="bg-purple-500 text-white px-4 py-2 mt-3"
+              onClick={() => setShowImportModal(true)}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg shadow-sm"
             >
               Import CSV
             </button>
@@ -377,6 +346,89 @@ export default function EmployeePage() {
             setSelected(null);
           }}
         />
+      )}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-4xl bg-white rounded-xl shadow-lg p-6 space-y-5">
+            <div>
+              <h2 className="text-xl font-bold">
+                Import Employees CSV
+              </h2>
+              <p className="text-sm text-gray-500">
+                Select a CSV file and review the first few rows before
+                importing.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                CSV File
+              </label>
+              <input
+                type="file"
+                accept=".csv"
+                onChange={handleFileChange}
+                className="w-full border rounded px-3 py-2"
+              />
+            </div>
+
+            {preview.length > 0 && (
+              <div className="border rounded-lg overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-100 text-left">
+                    <tr>
+                      {Object.keys(preview[0]).map((key) => (
+                        <th key={key} className="p-3 border-b">
+                          {key}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {preview.map((row, i) => (
+                      <tr key={i} className="border-t">
+                        {Object.values(row).map((val, j) => (
+                          <td key={j} className="p-3">
+                            {val}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {file && preview.length === 0 && (
+              <p className="text-sm text-gray-500">
+                No preview rows found in this file.
+              </p>
+            )}
+
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowImportModal(false);
+                  setFile(null);
+                  setPreview([]);
+                }}
+                className="px-4 py-2 border rounded hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handleUpload}
+                className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+              >
+                Import
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

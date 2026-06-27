@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 import API from '../../services/api';
 import { useDispatch } from 'react-redux';
-import {
-  addEmployee,
-  updateEmployee,
-} from '../../store/employeesSlice';
+import { updateEmployee } from '../../store/employeesSlice';
 import { toast } from 'react-toastify';
 
 export default function EmployeeModal({
@@ -14,6 +11,7 @@ export default function EmployeeModal({
 }) {
   const dispatch = useDispatch();
   const [departments, setDepartments] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     API.get('/departments/').then((res) => setDepartments(res.data));
@@ -30,98 +28,135 @@ export default function EmployeeModal({
   });
 
   useEffect(() => {
-    if (employee) setForm(employee);
+    if (employee) {
+      setForm({
+        name: employee.name || '',
+        type: employee.type || '',
+        salary: employee.salary || 0,
+        hourly_rate: employee.hourly_rate || 0,
+        hours: employee.hours || 0,
+        bonus: employee.bonus || 0,
+        team_size: employee.team_size || 0,
+        department_id: employee.department_id || '',
+      });
+    }
   }, [employee]);
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!form.department_id) {
+      toast.error('Please select a department');
+      return;
+    }
     const payload = {
-      ...form,
       name: form.name.trim(),
+      type: form.type,
+      salary: Number(form.salary),
+      hourly_rate: Number(form.hourly_rate),
+      hours: Number(form.hours),
+      bonus: Number(form.bonus),
+      team_size: form.type === 'manager' ? Number(form.team_size) : 0,
+      department_id: Number(form.department_id),
     };
-
     if (payload.name.length < 2) {
       toast.error('Employee name must be at least 2 characters');
       return;
     }
 
-    if (!payload.type) {
-      toast.error('Please select an employee type');
-      return;
-    }
-
     try {
+      setIsSaving(true);
       if (employee) {
         await dispatch(
           updateEmployee({ id: employee.id, data: payload }),
         ).unwrap();
 
         toast.success('Employee updated');
-      } else {
-        await dispatch(addEmployee(payload)).unwrap();
-
-        toast.success('Employee added');
       }
-
       await onSaved();
       onClose();
     } catch (error) {
       toast.error(
         typeof error === 'string' ? error : 'Failed to save employee',
       );
+    } finally {
+      setIsSaving(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-40">
+    <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/40 px-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded space-y-3"
+        className="w-full max-w-md bg-white rounded-xl shadow-lg p-6 space-y-5"
       >
-        <input
-          placeholder="Name"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-        />
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Employee Name
+          </label>
 
-        <select
-          value={form.type}
-          onChange={(e) => setForm({ ...form, type: e.target.value })}
-        >
-          <option value="">Type</option>
-          <option value="fulltime">Full Time</option>
-          <option value="parttime">Part Time</option>
-          <option value="manager">Manager</option>
-        </select>
-        <select
-          className="w-full p-2 border rounded"
-          value={form.department_id}
-          onChange={(e) =>
-            setForm({ ...form, department_id: e.target.value })
-          }
-        >
-          <option value="">Select Department</option>
-          {departments.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.name}
+          <input
+            placeholder="Employee name"
+            value={form.name}
+            onChange={(e) =>
+              setForm({ ...form, name: e.target.value })
+            }
+            className="w-full border rounded px-3 py-2"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Employee Type
+          </label>
+
+          <div className="w-full border rounded px-3 py-2 bg-gray-50 text-gray-700">
+            {form.type === 'fulltime'
+              ? 'Full Time'
+              : form.type === 'parttime'
+                ? 'Part Time'
+                : form.type === 'manager'
+                  ? 'Manager'
+                  : 'Unknown'}
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Department
+          </label>
+
+          <select
+            className="w-full border rounded px-3 py-2"
+            value={form.department_id}
+            onChange={(e) =>
+              setForm({ ...form, department_id: e.target.value })
+            }
+          >
+            <option value="" disabled>
+              Select Department
             </option>
-          ))}
-        </select>
 
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2"
-        >
-          Save
-        </button>
+            {departments.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 border rounded hover:bg-gray-50"
+          >
+            Cancel
+          </button>
 
-        <button
-          type="button"
-          onClick={onClose}
-          className="bg-gray-400 text-white px-4 py-2"
-        >
-          Cancel
-        </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Save Changes
+          </button>
+        </div>
       </form>
     </div>
   );
