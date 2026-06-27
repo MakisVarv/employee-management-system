@@ -8,9 +8,10 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
+  ResponsiveContainer,
 } from 'recharts';
 
-export default function Charts({ summary }) {
+export default function Charts({ summary, depStats }) {
   const data = [
     {
       name: 'Full Time',
@@ -53,6 +54,21 @@ export default function Charts({ summary }) {
           <Tooltip />
           <Bar dataKey="value" fill="#6366f1" />
         </BarChart>
+      </div>
+
+      <div className="bg-white p-6 rounded-xl shadow mt-6">
+        <h2 className="text-xl font-bold mb-4">
+          Employees per Department
+        </h2>
+
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={summary.depStats}>
+            <XAxis dataKey="department" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="total" />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

@@ -1,5 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+import csv
+
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
+from models.department import Department
 from repositories.employee_crud import create_employee, delete_employee, get_employees
 from models.employee import Employee
 from schemas.employee_schema import (
@@ -81,6 +84,49 @@ def export_employees(
         media_type="text/csv",
         headers={"Content-Disposition": "attachment; filename=employees.csv"},
     )
+
+
+@employee_router.post("/import-csv")
+async def import_csv(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    payload: dict = Depends(manager_or_admin_required),
+):
+    content = await file.read()
+    decoded = content.decode("utf-8")
+
+    reader = csv.DictReader(io.StringIO(decoded))
+
+    created = 0
+    for row in reader:
+        if not row.get("name") or not row.get("type"):
+            continue
+        dep_name = row.get("department")
+
+        department = db.query(Department).filter(Department.name == dep_name).first()
+
+        if not department and dep_name:
+            department = Department(name=dep_name)
+            db.add(department)
+            db.commit()
+            db.refresh(department)
+            emp = Employee(
+                name=row.get("name"),
+                type=row.get("type"),
+                salary=float(row.get("salary") or 0),
+                hourly_rate=float(row.get("hourly_rate") or 0),
+                hours=int(row.get("hours") or 0),
+                bonus=float(row.get("bonus") or 0),
+                team_size=int(row.get("team_size") or 0),
+                department_id=department.id if department else None,
+            )
+
+        db.add(emp)
+        created += 1
+
+        db.commit()
+
+    return {"message": f"{created} employees imported"}
 
 
 @employee_router.delete("/{emp_id}")

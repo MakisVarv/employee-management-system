@@ -31,6 +31,35 @@ export default function EmployeePage() {
   }, [page, search, type, sort, order, dispatch]);
 
   const totalPages = Math.ceil(total / 10);
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState([]);
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const text = event.target.result;
+
+      const rows = text.split('\n').map((r) => r.split(','));
+
+      const headers = rows[0];
+      const data = rows.slice(1, 6); // 🔥 δείχνει μόνο 5 γραμμές
+
+      const formatted = data.map((row) => {
+        const obj = {};
+        headers.forEach((h, i) => {
+          obj[h.trim()] = row[i];
+        });
+        return obj;
+      });
+
+      setPreview(formatted);
+    };
+
+    reader.readAsText(selectedFile);
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -71,6 +100,26 @@ export default function EmployeePage() {
     fulltime: 'Full Time',
     parttime: 'Part Time',
     manager: 'Manager',
+  };
+  const handleUpload = async () => {
+    if (!file) {
+      alert('Please select a file first');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      await API.post('/employees/import-csv', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      alert('Import successful');
+      fetchEmployees();
+    } catch (err) {
+      alert('Import failed');
+    }
   };
 
   return (
@@ -173,6 +222,49 @@ export default function EmployeePage() {
               className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm"
             >
               Export CSV
+            </button>
+            <input
+              type="file"
+              accept=".csv"
+              onChange={handleFileChange}
+            />
+            {preview.length > 0 && (
+              <div className="mt-4">
+                <h3 className="font-bold mb-2">Preview</h3>
+
+                <table className="w-full border">
+                  <thead>
+                    <tr>
+                      {Object.keys(preview[0]).map((key) => (
+                        <th
+                          key={key}
+                          className="border p-2 bg-gray-100"
+                        >
+                          {key}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {preview.map((row, i) => (
+                      <tr key={i}>
+                        {Object.values(row).map((val, j) => (
+                          <td key={j} className="border p-2">
+                            {val}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            <button
+              onClick={handleUpload}
+              className="bg-purple-500 text-white px-4 py-2 mt-3"
+            >
+              Import CSV
             </button>
           </div>
         </div>

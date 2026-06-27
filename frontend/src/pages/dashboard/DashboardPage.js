@@ -9,6 +9,7 @@ export default function DashboardPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    setLoading(true);
     API.get('/dashboard/summary')
       .then((res) => setSummary(res.data))
       .catch(() => setError('Failed to load dashboard summary'))
